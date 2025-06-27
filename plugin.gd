@@ -15,8 +15,8 @@ func _exit_tree() -> void:
 	Engine.remove_meta(&"IntegerViewportPlugin")
 
 func _enable_plugin() -> void:
-	add_autoload_singleton("ViewportManager", get_plugin_path() + "/viewport_manager.gd")
+	pass
 
 func _disable_plugin() -> void:
-	remove_autoload_singleton("ViewportManager")
+	pass
 
