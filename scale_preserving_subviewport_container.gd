@@ -8,23 +8,33 @@ class_name IntegerScalingSubViewportContainer extends SubViewportContainer
 		base_size = value
 		self.custom_minimum_size = base_size
 		self._update_scale()
-		self.queue_sort()
 
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_RESIZED:
-			self._update_scale()
-		_:
-			pass
+func _validate_property(property: Dictionary) -> void:
+	match property.name:
+		&"custom_minimum_size":
+			property.usage = PROPERTY_USAGE_READ_ONLY
+		&"stretch":
+			property.usage = PROPERTY_USAGE_READ_ONLY
+		&"stretch_shrink":
+			property.usage = PROPERTY_USAGE_READ_ONLY
 
 func _init() -> void:
 	self.stretch = true
 
 	self.child_entered_tree.connect(self._on_child_entered)
 
+func _ready() -> void:
+	self._update_scale()
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_RESIZED:
+			self._update_scale()
+
 func _update_scale() -> void:
 	self.stretch = true
 	self.stretch_shrink = IntegerScalingContainer.get_largest_integer_scale(self.base_size, self.size)
+	self.queue_sort()
 
 func _on_child_entered(c: Node) -> void:
 	if c is SubViewport:

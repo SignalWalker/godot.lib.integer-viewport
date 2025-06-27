@@ -26,7 +26,10 @@ static func get_largest_integer_scale(base: Vector2i, within: Vector2i) -> int:
 	return maxi(1, mini(x_scale, y_scale))
 
 static func fit_window(win: Window, base: Vector2i) -> void:
-	if Engine.is_editor_hint():
+	if win.is_embedded():
+		push_error("called fit_window on embedded window")
+		return
+	if Engine.is_embedded_in_editor():
 		return
 
 	win.min_size = base
@@ -39,12 +42,22 @@ static func fit_window(win: Window, base: Vector2i) -> void:
 	win.size = base * IntegerScalingContainer.get_largest_integer_scale(base, use_rect.size - brd_size)
 	win.move_to_center()
 
+func _validate_property(property: Dictionary) -> void:
+	match property.name:
+		&"custom_minimum_size":
+			property.usage = PROPERTY_USAGE_READ_ONLY
+
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_SORT_CHILDREN:
-		var new_rect := self.get_scaled_rect()
-		for c: Node in self.get_children():
-			if c is Control:
-				self.fit_child_in_rect(c as Control, new_rect)
+	match what:
+		NOTIFICATION_SORT_CHILDREN:
+			var new_rect := self.get_scaled_rect()
+			for c: Node in self.get_children():
+				if c is Control:
+					print("int scaling {0}".format([c]))
+					self.fit_child_in_rect(c as Control, new_rect)
+
+func _ready() -> void:
+	self.queue_sort()
 
 func get_largest_scale() -> int:
 	return get_largest_integer_scale(self.base_size, self.size)
