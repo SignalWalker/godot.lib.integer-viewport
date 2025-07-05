@@ -2,7 +2,9 @@
 extends EditorPlugin
 
 func get_plugin_path() -> String:
-	return get_script().resource_path.get_base_dir()
+	var scr: Variant = get_script()
+	assert(scr != null)
+	return (scr as Script).resource_path.get_base_dir()
 
 func _enter_tree() -> void:
 	if !Engine.is_editor_hint():
