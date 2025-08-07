@@ -53,7 +53,6 @@ func _notification(what: int) -> void:
 			var new_rect := self.get_scaled_rect()
 			for c: Node in self.get_children():
 				if c is Control:
-					print("int scaling {0}".format([c]))
 					self.fit_child_in_rect(c as Control, new_rect)
 
 func _ready() -> void:
